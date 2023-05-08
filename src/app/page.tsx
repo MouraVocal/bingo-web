@@ -1,7 +1,7 @@
 'use client'
+import { useRef, useState } from 'react'
 import { Box, Button, TextInput, Heading } from '@mouravocal/react'
-import { Dispatch, SetStateAction, useRef, useState } from 'react'
-import Tesseract from 'tesseract.js'
+import { addNumber, extractNumbers, handleImageChange } from '@/utils'
 
 export default function Home() {
   const inputImageRef = useRef<HTMLInputElement>(null)
@@ -11,41 +11,9 @@ export default function Home() {
   const [chartNumber, setChartNumber] = useState('')
   const [drawnNumber, setDrawnNumber] = useState('')
 
-  const addNumber = (
-    number: string,
-    setArray: Dispatch<SetStateAction<number[]>>,
-    setNumber: Dispatch<SetStateAction<string>>
-  ) => {
-    if (Number.isNaN(Number(number)) || !number) return
-    setArray(oldNumbers => [...oldNumbers, Number(number)])
-    setNumber('')
-  }
-
-  const filterArray = (array: (number | undefined)[]): number[] => {
-    const filterUndefined = array.filter(item => item !== undefined) as number[]
-    return filterUndefined.filter(item => !chartNumbers.includes(item))
-  }
-
-  const imageUpload = () => {
-    if (inputImageRef.current?.files?.length) {
-      const file = inputImageRef.current.files[0]
-      console.log(file)
-      Tesseract.recognize(file, 'por', { logger: m => console.log(m) }).then(
-        ({ data: { text } }) => {
-          console.log(text)
-          const result = text.replace('\n', '').split(' ')
-          console.log(result)
-          const newNumbers = result.map(number => {
-            if (Number.isNaN(Number(number))) return
-            return Number(number)
-          })
-          setChartNumbers(oldNumbers => [
-            ...oldNumbers,
-            ...filterArray(newNumbers)
-          ])
-        }
-      )
-    }
+  const handleExtractNumbers = async (file: File) => {
+    const extractedNumbers = await extractNumbers(file)
+    setChartNumbers(oldNumbers => [...oldNumbers, ...extractedNumbers])
   }
 
   return (
@@ -57,7 +25,7 @@ export default function Home() {
         type="file"
         ref={inputImageRef}
         accept="image/*"
-        onChange={imageUpload}
+        onChange={e => handleImageChange(e, handleExtractNumbers)}
       />
       <Box
         css={{
