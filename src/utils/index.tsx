@@ -3,11 +3,11 @@ import Tesseract from 'tesseract.js'
 
 export const addNumber = (
   number: string,
-  setArray: Dispatch<SetStateAction<number[]>>,
+  setArray: Dispatch<SetStateAction<string[]>>,
   setNumber: Dispatch<SetStateAction<string>>
 ) => {
   if (Number.isNaN(Number(number)) || !number) return
-  setArray(oldNumbers => [...oldNumbers, Number(number)])
+  setArray(oldNumbers => [...oldNumbers, number])
   setNumber('')
 }
 
