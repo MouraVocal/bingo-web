@@ -1,10 +1,11 @@
 'use client'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { ChangeEventHandler, useRef, useState } from 'react'
 import { Box, Button, TextInput, Heading } from '@mouravocal/react'
-import { addNumber, extractNumbers, handleImageChange } from '@/utils'
+import { addNumber, handleImageChange } from '@/utils'
 import { Chart } from '@/components/Chart'
 import { NumberInput } from '@/components/NumberInput'
 import { getImageNumbers } from '@/services'
+import { ChartImageInput } from '@/components/ChartImageInput'
 
 export default function Home() {
   const inputImageRef = useRef<HTMLInputElement>(null)
@@ -16,20 +17,25 @@ export default function Home() {
 
   const handleExtractNumbers = async (file: File) => {
     const apiResponse = await getImageNumbers(file)
-    const extractedNumbers = apiResponse.numbers
+
+    console.log(apiResponse)
+
+    const extractedNumbers = apiResponse
     setChartNumbers(oldNumbers => [...oldNumbers, ...extractedNumbers])
   }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <Heading as="h1" css={{ fontSize: '$5xl', textAlign: 'center' }}>
-        Cartela do Bingo
+        Cartela de Bingo
       </Heading>
-      <input
-        type="file"
+
+      <ChartImageInput
         ref={inputImageRef}
+        type="file"
         accept="image/*"
         onChange={e => handleImageChange(e, handleExtractNumbers)}
+        isLoading={true}
       />
 
       <NumberInput
@@ -39,7 +45,12 @@ export default function Home() {
         setInput={setChartNumber}
       />
 
-      <Chart chartNumbers={chartNumbers} drawnNumbers={drawnNumbers} />
+      <Chart
+        chartNumbers={chartNumbers}
+        drawnNumbers={drawnNumbers}
+        setChartNumbers={setChartNumbers}
+        setDrawnNumbers={setDrawnNumbers}
+      />
       <Box
         css={{
           display: 'flex',

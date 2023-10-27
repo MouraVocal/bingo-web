@@ -1,5 +1,4 @@
-import { ChangeEvent, Dispatch, RefObject, SetStateAction } from 'react'
-import Tesseract from 'tesseract.js'
+import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 
 export const addNumber = (
   number: string,
@@ -15,30 +14,13 @@ export const handleImageChange = (
   event: ChangeEvent<HTMLInputElement>,
   callback: (file: File) => {}
 ) => {
-  if (!event.currentTarget.files) return
+  if (!event.currentTarget.files?.length) return
 
   const imageFile = event.currentTarget.files[0]
 
   callback(imageFile)
 }
 
-export const extractNumbers = async (file: File) => {
-  const {
-    data: { text }
-  } = await Tesseract.recognize(file, 'eng', { logger: m => console.log(m) })
-
-  console.log(text)
-
-  const result = text.replace('\n', '').split(' ')
-
-  console.log(result)
-
-  let numbers: number[] = []
-
-  result.forEach(number => {
-    if (Number.isNaN(Number(number))) return
-    numbers.push(Number(number))
-  })
-
-  return numbers
+export const orderArray = (array: string[]) => {
+  return array.sort((a: string, b: string) => Number(a) - Number(b))
 }

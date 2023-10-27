@@ -1,33 +1,35 @@
 import { Box, Heading } from '@mouravocal/react'
 import { IChartProps } from './types'
+import { DrawnNumberBlock } from '@/components/DrawnNumberBlock'
+import { orderArray } from '@/utils'
 
-export const Chart = ({ chartNumbers, drawnNumbers }: IChartProps) => {
+export const Chart = ({
+  chartNumbers,
+  drawnNumbers,
+  setChartNumbers
+}: IChartProps) => {
+  const isDrawnNumber = (number: string) => drawnNumbers.includes(number)
+
+  const deleteNumber = (number: string) => {
+    const newChartNumbers = chartNumbers.filter(
+      chartNumber => chartNumber !== number
+    )
+    setChartNumbers(newChartNumbers)
+  }
+
   return (
-    <Box
-      css={{
-        display: 'flex',
-        flexGrow: 1,
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        margin: '$3',
-        gap: '$3',
-        maxWidth: '80vw',
-        flexWrap: 'wrap',
-        minWidth: '50%'
-      }}
-    >
+    <Box className="flex flex-grow flex-row items-start m-3 gap-3 max-w-screen-md flex-wrap min-w-[50%]">
       <div className="flex flex-col gap-3">
         <Heading>Números da cartela</Heading>
-        <div className="flex">
-          {chartNumbers.map(number => {
+        <div className="flex flex-wrap gap-2 items-center justify-center">
+          {orderArray(chartNumbers).map(number => {
             return (
-              <Box key={number}>
-                {drawnNumbers.includes(Number(number)) ? (
-                  <p className="text-lime-600">{number}</p>
-                ) : (
-                  <p className="text-red-500">{number}</p>
-                )}
-              </Box>
+              <DrawnNumberBlock
+                value={number}
+                isDrawnNumber={isDrawnNumber(number)}
+                key={number}
+                onClick={() => deleteNumber(number)}
+              />
             )
           })}
         </div>

@@ -1,6 +1,7 @@
 import { Box, Button, TextInput } from '@mouravocal/react'
 import { INumberInputProps } from './types'
 import { addNumber } from '@/utils'
+import { DeleteButton } from '../DeleteButton'
 
 export const NumberInput = ({
   input,
@@ -25,7 +26,7 @@ export const NumberInput = ({
         onKeyUp={e => {
           const key = e.key
           if (key === 'Enter') {
-            if (array.includes(Number(input))) return
+            if (array.includes(input)) return
             addNumber(input, setArray, setInput)
           }
         }}
